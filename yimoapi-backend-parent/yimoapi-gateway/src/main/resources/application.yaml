@@ -1,0 +1,35 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedHeaders: "*"
+            allowedOriginPatterns: "*"
+            allowCredentials: true
+            allowedMethods: "*"
+      routes:
+        - id: apiserver_route
+          uri: lb://server-service
+          predicates:
+            - Path=/api/**
+        - id: user_route
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**,/menu/**
+      discovery:
+        locator:
+          enabled: true
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: trace
